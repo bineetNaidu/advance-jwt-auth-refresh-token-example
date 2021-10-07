@@ -1,8 +1,9 @@
 import { HttpException, Injectable, HttpStatus } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import argon2 from 'argon2';
+import * as argon2 from 'argon2';
 import { User } from 'src/user/user.entity';
 import { Repository } from 'typeorm';
+import { RegisterDto } from './dto/register.dto';
 
 @Injectable()
 export class AuthService {
@@ -23,11 +24,9 @@ export class AuthService {
     return user;
   }
 
-  async register(username: string, password: string, is_admin: boolean) {
-    const hash = await argon2.hash(password, { hashLength: 12 });
-    const user = await this.userRepo
-      .create({ username, password: hash, is_admin })
-      .save();
+  async register(data: RegisterDto) {
+    const hash = await argon2.hash(data.password, { hashLength: 12 });
+    const user = await this.userRepo.create({ ...data, password: hash }).save();
 
     return user;
   }

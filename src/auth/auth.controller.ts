@@ -1,5 +1,6 @@
 import { Body, Controller, Get, Post } from '@nestjs/common';
 import { AuthService } from './auth.service';
+import { RegisterDto } from './dto/register.dto';
 
 @Controller('api/auth')
 export class AuthController {
@@ -14,12 +15,9 @@ export class AuthController {
   }
 
   @Post('register')
-  async register(
-    @Body('username') username: string,
-    @Body('password') password: string,
-    @Body('is_admin') is_admin: boolean,
-  ) {
-    return await this.authService.register(username, password, is_admin);
+  async register(@Body() body: RegisterDto) {
+    const res = await this.authService.register(body);
+    return res;
   }
 
   @Get('refresh_token')
