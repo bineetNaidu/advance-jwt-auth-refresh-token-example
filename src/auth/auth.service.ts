@@ -25,10 +25,16 @@ export class AuthService {
   }
 
   async register(data: RegisterDto) {
-    const hash = await argon2.hash(data.password, { hashLength: 12 });
-    const user = await this.userRepo.create({ ...data, password: hash }).save();
+    try {
+      const hash = await argon2.hash(data.password, { hashLength: 12 });
+      const user = await this.userRepo
+        .create({ ...data, password: hash })
+        .save();
 
-    return user;
+      return user;
+    } catch (error) {
+      throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
+    }
   }
 
   async getRefreshToken(accessToken: string) {
